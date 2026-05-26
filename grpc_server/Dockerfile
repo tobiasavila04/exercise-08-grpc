@@ -1,9 +1,22 @@
-FROM python:3.14-slim
+FROM python:3.12-slim
+
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev && rm -rf /var/lib/apt/lists/*
-COPY grpc_server/requirements.txt .
+
+# Install dependencies
+COPY grpc_server/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy proto and generate stubs in /app/
 COPY proto/ proto/
-COPY grpc_server/ .
-RUN python -m grpc_tools.protoc -I proto --python_out=. --grpc_python_out=. proto/node_registry.proto
+RUN python -m grpc_tools.protoc \
+      -I proto \
+      --python_out=. \
+      --grpc_python_out=. \
+      proto/node_registry.proto
+
+# Copy server code directly into /app/ so imports resolve
+COPY grpc_server/server.py server.py
+
+EXPOSE 50051
+
 CMD ["python", "server.py"]

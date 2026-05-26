@@ -9,29 +9,32 @@ service NodeRegistry {
   rpc Delete(DeleteRequest) returns (Empty);
 }
 
+message Empty {}
+
 message RegisterRequest {
   string name = 1;
-  string address = 2;
+  string host = 2;
+  int32 port = 3;
+}
+
+message GetRequest {
+  string name = 1;
+}
+
+message DeleteRequest {
+  string name = 1;
 }
 
 message NodeResponse {
   int32 id = 1;
   string name = 2;
-  string address = 3;
-  string status = 4;
-  string created_at = 5;
+  string host = 3;
+  int32 port = 4;
+  string status = 5;
+  string created_at = 6;
+  string updated_at = 7;
 }
-
-message Empty {}
 
 message NodeList {
   repeated NodeResponse nodes = 1;
-}
-
-message GetRequest {
-  int32 id = 1;
-}
-
-message DeleteRequest {
-  int32 id = 1;
 }
